@@ -4,8 +4,15 @@ lua 语言的简单入门指南
 
 ## 前言
 
-lua 是一门脚本语言，对于习惯编写 javascript 等脚本语言代码的同学来说，上手 lua 应该会非常快。
-lua 也是一门非常精简的语言，以至于了解整个语言的概貌可能真的只需要半天时间，这里我以一个前端开发者的角度出发，来对 lua 语言做一个简单的概括。
+- lua 是一门脚本语言，对于习惯编写 javascript 等脚本语言代码的同学来说，上手 lua 应该会非常快。
+- lua 也是一门非常精简的语言，以至于了解整个语言的概貌可能真的只需要半天时间，这里我以一个前端开发者的角度出发，来对 lua 语言做一个简单的概括。
+
+当前的版本：
+
+```
+% lua -v
+Lua 5.4.8  Copyright (C) 1994-2025 Lua.org, PUC-Rio
+```
 
 ### lua 语言语法书写小结
 
@@ -13,6 +20,100 @@ lua 也是一门非常精简的语言，以至于了解整个语言的概貌可�
 2. 函数调用时，当参数只有一个且参数是字符串字面量或者表字面量时，可以省略括号，如 `table.new{"1", 2, 3} => table.new({"1", 2, 3})`，`require("a.b") => require "a.b"`
 3. lua 里没有三元操作符，`a ? b : c`，可以用 `(a and { b } or { c })[1]` 类似的语法来替代，但这样会多创建一个或者两个表。
 4. lua 里表的键值对写法里键与值的分隔符是 `=` 等号而不是 `:` 冒号。
+
+### lua 的内置函数
+
+在 Lua 中，要打印所有内部函数（即全局环境中的函数），可以使用以下方法：
+
+**方法一：遍历 _G 表**
+
+```lua
+-- 打印所有全局函数（包括内部函数）
+for name, value in pairs(_G) do
+    if type(value) == "function" then
+        print(name)
+    end
+end
+```
+打印如下：
+```
+select
+tonumber
+warn
+rawget
+require
+rawequal
+load
+tostring
+next
+assert
+rawset
+pairs
+type
+print
+ipairs
+dofile
+collectgarbage
+getmetatable
+rawlen
+loadfile
+error
+pcall
+xpcall
+setmetatable
+```
+
+**方法二：使用 debug 库获取更多信息**
+
+```lua
+-- 打印函数及其来源信息
+for name, value in pairs(_G) do
+    if type(value) == "function" then
+        local info = debug.getinfo(value)
+        print(string.format("%-15s (defined at %s:%d)", name, info.short_src, info.linedefined))
+    end
+end
+```
+
+打印如下(可能是 lua 用的发行版本，没有打印出具体的文件及行号)：
+
+```
+dofile          (defined at [C]:-1)
+type            (defined at [C]:-1)
+pairs           (defined at [C]:-1)
+require         (defined at [C]:-1)
+rawlen          (defined at [C]:-1)
+loadfile        (defined at [C]:-1)
+pcall           (defined at [C]:-1)
+collectgarbage  (defined at [C]:-1)
+rawget          (defined at [C]:-1)
+tonumber        (defined at [C]:-1)
+ipairs          (defined at [C]:-1)
+rawset          (defined at [C]:-1)
+load            (defined at [C]:-1)
+next            (defined at [C]:-1)
+error           (defined at [C]:-1)
+getmetatable    (defined at [C]:-1)
+rawequal        (defined at [C]:-1)
+warn            (defined at [C]:-1)
+select          (defined at [C]:-1)
+assert          (defined at [C]:-1)
+tostring        (defined at [C]:-1)
+setmetatable    (defined at [C]:-1)
+xpcall          (defined at [C]:-1)
+print           (defined at [C]:-1)
+```
+
+常见的 Lua 内部函数可以总计为如下几类：
+- 基础函数
+- 模块相关
+- 迭代器
+- 数学函数
+- 字符串处理
+- 表处理
+- 协程
+- 调试
+
 
 ### 1. 类型
 
