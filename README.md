@@ -2,6 +2,9 @@
 
 lua 语言的简单入门指南
 
+参考：
+- [云风翻译的  Lua 5.3 参考手册](https://cloudwu.github.io/lua53doc/manual.html)
+
 ## 前言
 
 - lua 是一门脚本语言，对于习惯编写 javascript 等脚本语言代码的同学来说，上手 lua 应该会非常快。
