@@ -817,3 +817,23 @@ Lua 栈使用注意要点：
 6. 错误处理和栈的恢复：在编写 Lua C 扩展时，要及时捕获和处理错误，避免出现未处理的异常。在发生错误时，要注意将栈恢复到正确的状态，避免栈中的残留数据影响后续操作。
 7. 避免频繁的栈操作：频繁的压栈和弹栈操作会导致性能下降。尽量减少不必要的栈操作，优化代码逻辑，可以使用局部变量或临时变量来减少栈操作次数。
 
+**Lua C API**
+
+int lua_next (lua_State *L, int index);
+
+从栈上弹出一个 key（键），然后把索引指定的表中 key-value（健值）对压入堆栈（指定 key 后面的下一 (next) 对）。如果表中以无更多元素，那么lua_next 将返回 0 （什么也不压入堆栈）。
+
+典型的遍历方法是这样的：
+```
+/* table 放在索引 't' 处 */
+     lua_pushnil(L);  /* 第一个 key */
+     while (lua_next(L, t) != 0) {
+       /* 用一下 'key' （在索引 -2 处） 和 'value' （在索引 -1 处） */
+       printf("%s - %s\n",
+              lua_typename(L, lua_type(L, -2)),
+              lua_typename(L, lua_type(L, -1)));
+       /* 移除 'value' ；保留 'key' 做下一次迭代 */
+       lua_pop(L, 1);
+     }
+```
+在遍历一张表的时候，不要直接对 key 调用 lua_tolstring ，除非你知道这个 key 一定是一个字符串。调用 lua_tolstring 有可能改变给定索引位置的值；这会对下一次调用 lua_next 造成影响。
